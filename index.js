@@ -67,6 +67,20 @@ function addShutdown(server) {
     shutdown(true, cb);
   };
 
+  process.on('exit', (code) => {
+    console.log(`http-shutdown:: About to exit with code: ${code}`);
+
+    let activeConnectionsCount = 0;
+
+    Object.keys(connections).forEach(function(key) {
+        if (connections[key]._isIdle === false) {
+            activeConnectionsCount += 1;
+        }
+    });
+
+    console.log(`Exiting with ${activeConnectionsCount} active connections`);
+  });
+
   return server;
 };
 
